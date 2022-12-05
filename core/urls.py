@@ -1,4 +1,4 @@
-"""django_movie URL Configuration
+"""core URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -18,12 +18,10 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
-from .api import router
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('app/', include('mov.urls'))
  ]
