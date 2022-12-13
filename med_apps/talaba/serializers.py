@@ -7,10 +7,11 @@ class Talaba_Qushish_serializer(serializers.ModelSerializer):
     #   telfon_raqam = serializers.DecimalField(max_digits=78, decimal_places=0)
     #   OTM = serializers.CharField(max_length=100,choices=OTM_lar_ruyhati)
     #   talabalik_turi = serializers.CharField(max_length=50, choices=TALABALIK_turi)
-    #   Kontrakt_summa = serializers.DecimalField(max_digits=78, decimal_places=0)          
+    #   Kontrakt_summa = serializers.DecimalField(max_digits=78, decimal_places=0)     
+      url = serializers.HyperlinkedIdentityField(view_name='myapp:talaba-detail',lookup_field='pk')     
       class Meta:
            model = Talaba_qushish
-           fields = '__all__'
+           fields = ['Talaba_ismi','telfon_raqam','OTM','talabalik_turi','Kontrakt_summa','url']
            
            
       def create(self, validated_data):
@@ -20,3 +21,7 @@ class Talaba_Qushish_serializer(serializers.ModelSerializer):
 
 
 
+
+
+  
+  

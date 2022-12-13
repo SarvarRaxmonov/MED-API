@@ -2,30 +2,34 @@ from rest_framework.response import Response
 from rest_framework import views  
 from .serializers import Talaba_Qushish_serializer
 from rest_framework import status
+from rest_framework.decorators import action
 from .models import Talaba_qushish
+from django_filters.rest_framework import DjangoFilterBackend 
+from rest_framework import filters      
+from django_filters import rest_framework as filter_dj
+from rest_framework.viewsets import ModelViewSet
 # Create your views here.
 
 
-class Talaba_qushish_view(views.APIView):
+
+class Talaba_qushish_view(ModelViewSet):
     serializer_class = Talaba_Qushish_serializer
-    def get(self,request):
-        instance = Talaba_qushish.objects.all()
-        serializer = Talaba_Qushish_serializer(instance,many=True,context={"request": request})
-        return Response({'Data':serializer.data})
-         
-      
-    def post(self,request):
-        serializer = Talaba_Qushish_serializer(data=request.data)
-        if serializer.is_valid():    
+    queryset = Talaba_qushish.objects.all()
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]               
+    search_fields = ['^Talaba_ismi','talabalik_turi']
+    ordering_fields = ('sana',)
+ 
+    def get_queryset(self):
+        if self.request.method == "POST":
+            return []             
+        return self.queryset
+    
+    @action(detail=False,methods=['post'])
+    def add(self,request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
             serializer.save()
-            obj = Talaba_qushish.talaba_kontrakti_tulanganlar()
-            return Response({'Data':serializer.data,'data':obj})
-        return Response(serializer.errors, status=status.HTTP_200_OK)
-          
-    @classmethod
-    def get_extra_actions(cls):
-        return []
-    
-    
-    
-    
+            return Response(serializer.data)
+        return Response(serializer.data_error)           
+  
+  

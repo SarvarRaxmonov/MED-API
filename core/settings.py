@@ -17,7 +17,6 @@ import sys
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-sys.modules['fontawesome'] = __import__('fontawesome')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -40,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles', 
-    'fontawesome',
-    'rest_framework',
+    'rest_framework',                            
+    'django_filters',  
     'med_apps.homiy',
     'med_apps.talaba',   
-    'med_apps.admin_panel'
+    'med_apps.admin_panel'   
 ]
 
 MIDDLEWARE = [
@@ -138,4 +137,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'                                  
+
+
+
