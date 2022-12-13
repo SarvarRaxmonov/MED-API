@@ -34,9 +34,13 @@ class Talaba_qushish(Model):
           pass                   
 
 class Homiy_qushish_talabaga(models.Model):
+      homiy_tanla = models.CharField(max_length=200,default='None')
+      qancha_summa = models.DecimalField(max_digits=78, decimal_places=0,null=True)
+      Talaba_Ismi = models.CharField(max_length=200,default='None')
      
-      homiy_tanla = MultiSelectField(choices=HomiyArizasi.objects.get_queryset_of_ariza(),max_length=200,default='None')
-      
+     
+          
+    
       
       
       

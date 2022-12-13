@@ -31,3 +31,5 @@ class HomiyArizasi(models.Model):
         return self.Ismi
     
     
+    
+    
