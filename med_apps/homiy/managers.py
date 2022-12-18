@@ -15,7 +15,7 @@ class HomiyArizlariNamelari(models.Manager):
         homiy_balans = super().get_queryset().get(Ismi=Ismi).values('Balans')
         if (homiy_balans - summa) != 0 :
              return summa
-         return False
+        return False
    
     def kontrakt_calculate(self,Id:int,summa:int):
           
