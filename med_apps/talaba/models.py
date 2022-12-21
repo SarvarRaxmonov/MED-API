@@ -3,13 +3,14 @@ from django.db.models import (
     CharField,
     DecimalField,
     DateTimeField,
-    ForeignKey,
     CASCADE,
+    IntegerField,
 )
-from med_apps.homiy.models import HomiyArizasi
+from .managers import Talaba_All_managers
 from django.db import models
-from multiselectfield import MultiSelectField
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -23,30 +24,6 @@ TALABALIK_turi = [
 ]
 
 
-# Mini managers for tlaaba module
-
-
-class Talaba_All_managers(models.Manager):
-    def kontrakt_calculate(self, Id: int, summa: int):
-
-        talaba_malumotlari = super().get_queryset().get(id=Id)
-        ajratilgan_summa = int(talaba_malumotlari.Ajratilgan_summa) + int(summa)
-        if ajratilgan_summa > talaba_malumotlari.Kontrakt_summa:
-            return False
-        else:
-            return dict(id=Id, Ajratilgan_summa=ajratilgan_summa)
-
-    def update_talaba_balans(self, data: dict):
-        id_talaba = data["id"]
-        ajratilgan_pul_miqdori = data["Ajratilgan_summa"]
-        return (
-            super()
-            .get_queryset()
-            .filter(pk=id_talaba)
-            .update(Ajratilgan_summa=ajratilgan_pul_miqdori)
-        )
-
-
 # Start of the talaba app modules
 
 
@@ -56,19 +33,34 @@ class Talaba_qushish(Model):
     OTM = CharField(max_length=100, choices=OTM_lar_ruyhati, default="None")
     talabalik_turi = CharField(max_length=50, choices=TALABALIK_turi, default="None")
     Kontrakt_summa = DecimalField(max_digits=78, decimal_places=0, null=True)
-    Ajratilgan_summa = DecimalField(max_digits=78, decimal_places=0, default=0)
-    sana = DateTimeField(default=timezone.now())
+    Ajratilgan_summa = DecimalField(max_digits=78, decimal_places=False, default=0)
+    sana = DateTimeField(default=timezone.now)
     objects = Talaba_All_managers()
+
+    # DIQQAT YANGI FIELD
+    foizda = IntegerField(default=0)
 
     @property
     def talaba_kontrakti_tulanganlar(self):
         return self.Talaba_ismi.all()
 
+    def foizda_calculate(self):
+        result = (self.Ajratilgan_summa/self.Kontrakt_summa * 100)
+        return result
+    
+    def save(self, *args, **kwargs):
+        foizga_aylantirish = Talaba_qushish.objects.calculate_percentage(
+            kontrakt=self.Kontrakt_summa, tushgan_summa=self.Ajratilgan_summa
+        )
+        self.foizda = foizga_aylantirish
+        return super(Talaba_qushish, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.Talaba_ismi
-
+    
     class Meta:
         pass
+
 
 
 class Homiy_qushish_talabaga(models.Model):

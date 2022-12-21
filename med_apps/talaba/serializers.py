@@ -19,6 +19,7 @@ class Talaba_Qushish_serializer(serializers.ModelSerializer):
             "talabalik_turi",
             "Kontrakt_summa",
             "Ajratilgan_summa",
+            "foizda",
             "url",
         ]
 
@@ -63,7 +64,7 @@ class Talabaga_homiy_qushish_serializer(serializers.ModelSerializer):
 
         HomiyArizasi.objects.update_ariza_balans(validated_data["new_homiy_balans"])
         Talaba_qushish.objects.update_talaba_balans(validated_data["new_talaba_balans"])
-
+         
         return Homiy_qushish_talabaga.objects.create(**validated_data["data"])
 
 
@@ -82,6 +83,7 @@ class Talaba_data_Read_Only_serializer(serializers.ModelSerializer):
             "talabalik_turi",
             "Kontrakt_summa",
             "Ajratilgan_summa",
+            "foizda",
             "url",
             "talaba_homiysi",
         ]

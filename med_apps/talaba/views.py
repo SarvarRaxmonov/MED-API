@@ -61,7 +61,7 @@ class Talaba_qushish_view(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"ssss": serializer.data})
+            return Response({"Data qushildi": serializer.data})
         return Response(serializer.data)
 
     @action(

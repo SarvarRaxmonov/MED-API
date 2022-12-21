@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import viewsets
-from .serializers import HomiyArizaSerializer , HomiyArizasiTahrirlash
+from rest_framework import viewsets            
+from .serializers import HomiyArizaSerializer , HomiyArizasiTahrirlash, Homiy_pul_taqsimlash_Serialzier
 from .models import HomiyArizasi
 from rest_framework import permissions
 from rest_framework import status
@@ -32,8 +32,8 @@ class Homiy_arizasi(viewsets.ModelViewSet):
         serializer = HomiyArizasiTahrirlash(user,context={'request': request})
         return Response(serializer.data)
     
-    def update(self, request, *args, **kwargs):
-        instance = self.queryset.get(pk=kwargs.get('pk'))
+    def update(self, request, pk=None,*args, **kwargs):
+        instance =  get_object_or_404(HomiyArizasi.objects.all(), pk=pk)
         serializer = HomiyArizasiTahrirlash(instance, data=request.data, context={'request': request} , partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -55,9 +55,9 @@ class Homiy_arizasi(viewsets.ModelViewSet):
     def get_queryset(self):
       if self.action == 'list' or 'get':
           return []
-      else:
+      if self.action == 'put' or 'post':
           return HomiyArizasi.objects.all()  
-   
+    
 
 class Homiy_all_data_for_filtering(viewsets.ModelViewSet):
     permission_classes = [Homiy_malumotlari_access_Permissions]
@@ -67,5 +67,28 @@ class Homiy_all_data_for_filtering(viewsets.ModelViewSet):
     search_fields = ['^Ismi']
     ordering_fields = ('sana',)
 
- 
-            
+
+class Automatic_pul_taqsimlash_view(viewsets.ModelViewSet):
+    permission_classes = [Homiy_malumotlari_access_Permissions]
+    queryset = HomiyArizasi.objects.all()
+    http_method_names = ['put','get']
+    
+    def get_queryset(self):
+        if self.action in ['post','put']:
+            return []
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return Homiy_pul_taqsimlash_Serialzier
+        return Homiy_pul_taqsimlash_Serialzier   
+    
+    def put(self,request):   
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)                  
+    
+        
+       
+        
+        
