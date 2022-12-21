@@ -55,6 +55,8 @@ class Homiy_pul_taqsimlash_Serialzier(serializers.ModelSerializer):
         choices=HomiyArizasi.objects.get_queryset_of_ariza()
     )
     talaba_soni = serializers.IntegerField()
+    Balans = serializers.HiddenField(default=0)
+    Sarflangan_summa = serializers.HiddenField(default=0)
     class Meta:
         model = HomiyArizasi
         fields = [
@@ -62,6 +64,8 @@ class Homiy_pul_taqsimlash_Serialzier(serializers.ModelSerializer):
             'talaba_soni',
             'kontrakt_tulangan_foizdan',
             'kontrakt_tulangan_foizgacha',
+            'Balans',
+            'Sarflangan_summa'
         ]
 
     def validate_talaba_soni(self,value):
@@ -84,8 +88,10 @@ class Homiy_pul_taqsimlash_Serialzier(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         update_talaba = Talaba_qushish.objects.auto_update_talaba(data=validated_data)
         homiy_balans = HomiyArizasi.objects.auto_update_balans_calculate(Ismi=validated_data['Ismi'],qoldiq=update_talaba)
+        if validated_data:
+            validated_data['Sarflangan_summa'] = homiy_balans
+            validated_data['Balans'] = update_talaba
         
-        return HomiyArizasi.objects.filter(ariza_holati='Tasdiqlandi',Ismi=validated_data['Ismi']).update(**validated_data,Balans=update_talaba,Sarflangan_summa=homiy_balans) 
-    
+        return super().update(instance, validated_data)
     
     

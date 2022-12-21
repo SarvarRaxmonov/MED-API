@@ -82,7 +82,8 @@ class Automatic_pul_taqsimlash_view(viewsets.ModelViewSet):
         return Homiy_pul_taqsimlash_Serialzier   
     
     def put(self,request):   
-        serializer = self.get_serializer(data=request.data)
+        instance = HomiyArizasi.objects.filter(Ismi=request.data['Ismi'],ariza_holati='Tasdiqlandi').first()
+        serializer = self.get_serializer(instance=instance,data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
