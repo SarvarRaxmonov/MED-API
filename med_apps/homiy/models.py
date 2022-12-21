@@ -13,7 +13,7 @@ Holat_buyicha = [
 ]
  
     
-4442329891
+
    
 class HomiyArizasi(models.Model):
     Ismi = models.CharField(max_length=100,default='nomalum')
