@@ -30,7 +30,7 @@ class Talaba_Qushish_serializer(serializers.ModelSerializer):
 
 class Talabaga_homiy_qushish_serializer(serializers.ModelSerializer):
     homiy_tanla = serializers.ChoiceField(
-        choices=HomiyArizasi.objects.get_queryset_of_ariza()
+        choices=HomiyArizasi.objects.get_arizasi_tasdiqlangan_homiylar()
     )
     qancha_summa = serializers.DecimalField(max_digits=78, decimal_places=0)
     Talaba_Id = serializers.HiddenField(default=0)
@@ -60,13 +60,15 @@ class Talabaga_homiy_qushish_serializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if self.context.get("pk"):
             pk_of_talaba = Talaba_qushish.objects.get(id=self.context.get("pk"))
-            pk_of_homiy = HomiyArizasi.objects.get(Ismi=validated_data["data"]['homiy_tanla'])
+            pk_of_homiy = HomiyArizasi.objects.get(
+                Ismi=validated_data["data"]["homiy_tanla"]
+            )
             validated_data["data"]["Talaba_Id"] = pk_of_talaba
             validated_data["data"]["homiy_tanla"] = pk_of_homiy
-            
-        HomiyArizasi.objects.update_ariza_balans(validated_data["new_homiy_balans"])
+
+        HomiyArizasi.objects.update_homiy_balans(validated_data["new_homiy_balans"])
         Talaba_qushish.objects.update_talaba_balans(validated_data["new_talaba_balans"])
-         
+
         return Homiy_qushish_talabaga.objects.create(**validated_data["data"])
 
 

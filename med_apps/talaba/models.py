@@ -10,6 +10,7 @@ from .managers import Talaba_All_managers, Homiy_add_to_talaba_managers
 from django.db import models
 from django.utils import timezone
 from med_apps.homiy.models import HomiyArizasi
+
 # Create your models here.
 
 OTM_lar_ruyhati = [("OTM example", "OTM example")]
@@ -38,10 +39,6 @@ class Talaba_qushish(Model):
     # DIQQAT YANGI FIELD
     foizda = IntegerField(default=0)
 
-    @property
-    def talaba_kontrakti_tulanganlar(self):
-        return self.Talaba_ismi.all()
-    
     def save(self, *args, **kwargs):
         foizga_aylantirish = Talaba_qushish.objects.calculate_percentage(
             kontrakt=self.Kontrakt_summa, tushgan_summa=self.Ajratilgan_summa
@@ -51,10 +48,9 @@ class Talaba_qushish(Model):
 
     def __str__(self):
         return self.Talaba_ismi
-    
+
     class Meta:
         pass
-
 
 
 class Homiy_qushish_talabaga(models.Model):
@@ -64,6 +60,6 @@ class Homiy_qushish_talabaga(models.Model):
         Talaba_qushish, on_delete=CASCADE, null=True, related_name="talaba_homiysi"
     )
     objects = Homiy_add_to_talaba_managers()
-    
+
     def __str__(self):
         return f"{self.homiy_tanla} {self.qancha_summa} UZS"

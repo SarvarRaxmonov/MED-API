@@ -1,25 +1,20 @@
 from rest_framework.response import Response
-from rest_framework import views
 from .serializers import (
     Talaba_Qushish_serializer,
     Talabaga_homiy_qushish_serializer,
     Talaba_data_Read_Only_serializer,
 )
 from django.shortcuts import get_object_or_404
-from rest_framework import status
 from rest_framework.decorators import action
 from .models import Talaba_qushish
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from django_filters import rest_framework as filter_dj
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.request import Request
 
 # Create your views here.
 
 
 class Talaba_qushish_view(ModelViewSet):
-    # serializer_class = Talaba_Qushish_serializer
 
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["^Talaba_ismi", "talabalik_turi"]
@@ -70,8 +65,8 @@ class Talaba_qushish_view(ModelViewSet):
         serializer_class=Talabaga_homiy_qushish_serializer,
     )
     def add_homiy(self, request, pk=None):
-   
-        """ 
+
+        """
         Talabga homiy qushish uchun extra action
 
         """

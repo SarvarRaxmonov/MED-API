@@ -97,8 +97,7 @@ class Automatic_pul_taqsimlash_view(viewsets.ModelViewSet):
             return []
 
     def get_serializer_class(self):
-        if self.action == "update":
-            return Homiy_pul_taqsimlash_Serialzier
+
         return Homiy_pul_taqsimlash_Serialzier
 
     def put(self, request):
@@ -117,7 +116,7 @@ class Automatic_pul_taqsimlash_view(viewsets.ModelViewSet):
                         "Homiy ismi": data["Ismi"],
                         "Nechta talaba": data["talaba_soni"],
                         "Kontrakti tulangan talabalar": f"{data['kontrakt_tulangan_foizdan']}% - {data['kontrakt_tulangan_foizgacha']}% gacha",
-                        "Qolgan Balans": f'{instance.Balans} UZS',
+                        "Qolgan Balans": f"{instance.Balans} UZS",
                     },
                     "Talabalarga": f"{data['talaba_soni']} ta kontrakti  qisman tulangan talabalarga pullar teng taqsimlandi",
                 }
