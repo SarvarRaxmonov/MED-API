@@ -8,7 +8,7 @@ class HomiyArizlariNamelari(models.Manager):
         return (
             super()
             .get_queryset()
-            .filter(ariza_holati="Tasdiqlandi")
+            .filter(ariza_holati="Tasdiqlandi",Balans__gte=1)
             .values_list("Ismi", flat=True)
             .order_by("-Balans")
         )

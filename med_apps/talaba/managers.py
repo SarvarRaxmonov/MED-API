@@ -1,6 +1,11 @@
 from django.db import models
 from med_apps.homiy.models import HomiyArizasi
+from django.core.exceptions import ObjectDoesNotExist 
 class Talaba_All_managers(models.Manager):
+    
+    def get_all_talaba_count(self):      
+        return super().get_queryset().count()
+          
     def kontrakt_calculate(self, Id: int, summa: int):
 
         talaba_malumotlari = super().get_queryset().get(id=Id)
@@ -32,7 +37,8 @@ class Talaba_All_managers(models.Manager):
         nechta_talaba = data["talaba_soni"]
         foizdan = data['kontrakt_tulangan_foizdan']
         foizgacha = data['kontrakt_tulangan_foizgacha']
-        queryset  = super().get_queryset().filter(foizda__gte=foizdan,foizda__lte=foizgacha)[0:nechta_talaba]
+        queryset  = super().get_queryset().filter(foizda__gte=foizdan,foizda__lte=foizgacha).order_by("Ajratilgan_summa")[0:nechta_talaba]
+
         return queryset           
          
     def auto_update_uchun_talabalar_soni_checking(self,data:dict):
@@ -82,11 +88,21 @@ class Talaba_All_managers(models.Manager):
         return qoldiq    
        
     
-    def get_all_talaba_count(self):    
-        
-        return super().get_queryset().count()
+
+class Homiy_add_to_talaba_managers(models.Manager):
+    
+    def homiy_exists_or_not_i_database(self,data): 
+       Checking = True
+       try: 
+           super().get_queryset().filter(homiy_tanla_id=data['homiy_tanla'], Talaba_Id_id=data['Talaba_Id']).exists()       
+       except ObjectDoesNotExist:
+           Checking = False
       
-        
-        
-        
-            
+       return Checking    
+           
+    
+           
+           
+           
+                      
+                      

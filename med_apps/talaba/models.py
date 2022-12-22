@@ -6,12 +6,10 @@ from django.db.models import (
     CASCADE,
     IntegerField,
 )
-from .managers import Talaba_All_managers
+from .managers import Talaba_All_managers, Homiy_add_to_talaba_managers
 from django.db import models
 from django.utils import timezone
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
+from med_apps.homiy.models import HomiyArizasi
 # Create your models here.
 
 OTM_lar_ruyhati = [("OTM example", "OTM example")]
@@ -43,10 +41,6 @@ class Talaba_qushish(Model):
     @property
     def talaba_kontrakti_tulanganlar(self):
         return self.Talaba_ismi.all()
-
-    def foizda_calculate(self):
-        result = (self.Ajratilgan_summa/self.Kontrakt_summa * 100)
-        return result
     
     def save(self, *args, **kwargs):
         foizga_aylantirish = Talaba_qushish.objects.calculate_percentage(
@@ -64,11 +58,12 @@ class Talaba_qushish(Model):
 
 
 class Homiy_qushish_talabaga(models.Model):
-    homiy_tanla = models.CharField(max_length=200, default="None")
+    homiy_tanla = models.ForeignKey(HomiyArizasi, on_delete=CASCADE, null=True)
     qancha_summa = models.DecimalField(max_digits=78, decimal_places=0, null=True)
     Talaba_Id = models.ForeignKey(
         Talaba_qushish, on_delete=CASCADE, null=True, related_name="talaba_homiysi"
     )
-
+    objects = Homiy_add_to_talaba_managers()
+    
     def __str__(self):
         return f"{self.homiy_tanla} {self.qancha_summa} UZS"
